@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import random
+
 class Minesweeper:
     def __init__(self, width=10, height=10, mines=10):
         self.width = width
@@ -12,20 +14,43 @@ class Minesweeper:
         self.non_mine_cells = width * height - mines
 
     def place_mines(self):
-        # Implementation for placing mines on the board
-        pass
+        mines_placed = 0
+        while mines_placed < self.mines:
+            x = random.randint(0, self.width - 1)
+            y = random.randint(0, self.height - 1)
+            if self.board[y][x] != -1:
+                self.board[y][x] = -1
+                mines_placed += 1
 
     def calculate_numbers(self):
-        # Implementation for calculating numbers on the board
-        pass
+        for y in range(self.height):
+            for x in range(self.width):
+                if self.board[y][x] == -1:
+                    continue
+                self.board[y][x] = self.count_mines_nearby(x, y)
 
     def count_mines_nearby(self, x, y):
-        # Implementation for counting mines nearby a cell
-        pass
+        count = 0
+        for dx in [-1, 0, 1]:
+            for dy in [-1, 0, 1]:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < self.width and 0 <= ny < self.height and self.board[ny][nx] == -1:
+                    count += 1
+        return count
 
     def print_board(self, reveal=False):
-        # Implementation for printing the board
-        pass
+        for y in range(self.height):
+            row = ""
+            for x in range(self.width):
+                if reveal or self.revealed[y][x]:
+                    if self.board[y][x] == -1:
+                        row += "* "
+                    else:
+                        row += f"{self.board[y][x]} "
+                else:
+                    row += ". "
+            print(row)
+        print()
 
     def reveal(self, x, y):
         if self.revealed[y][x]:
@@ -34,7 +59,7 @@ class Minesweeper:
             return False
         self.revealed[y][x] = True
         self.non_mine_cells -= 1
-        if self.count_mines_nearby(x, y) == 0:
+        if self.board[y][x] == 0:
             for dx in [-1, 0, 1]:
                 for dy in [-1, 0, 1]:
                     nx, ny = x + dx, y + dy
