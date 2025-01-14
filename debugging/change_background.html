@@ -25,17 +25,24 @@
 <button id="colorButton">Change Color</button>
 
 <script>
+    var lastColor = "";
     document.getElementById("colorButton").addEventListener("click", function() {
         changeBackgroundColor();
     });
 
     function changeBackgroundColor() {
-        // Generate a random color
-        var randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
-        // Ensures the color code is always 6 digits
-        randomColor = randomColor.padEnd(7, '0');
+        var randomColor;
+        do {
+            // Generate a random color
+            randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
+            // Ensures the color code is always 6 digits
+            randomColor = randomColor.padEnd(7, '0');
+        } while (randomColor === lastColor);
+
         // Change the background color of the body
         document.body.style.backgroundColor = randomColor;
+        // Update the last color
+        lastColor = randomColor;
     }
 </script>
 
