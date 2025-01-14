@@ -12,6 +12,8 @@ class Minesweeper:
         self.mines = set(random.sample(range(width * height), mines))
         self.field = [[' ' for _ in range(width)] for _ in range(height)]
         self.revealed = [[False for _ in range(width)] for _ in range(height)]
+        self.total_cells = width * height
+        self.revealed_count = 0  # Keep track of revealed cells
 
     def print_board(self, reveal=False):
         clear_screen()
@@ -28,37 +30,37 @@ class Minesweeper:
                 else:
                     print('.', end=' ')
             print()
-        if self.check_win():
-            print("Congratulations! You've won the game.")
 
     def count_mines_nearby(self, x, y):
         count = 0
-        for dy in range(-1, 2):
-            for dx in range(-1, 2):
-                if 0 <= x + dx < self.width and 0 <= y + dy < self.height:
-                    if (y + dy) * self.width + (x + dx) in self.mines:
+        for dx in [-1, 0, 1]:
+            for dy in [-1, 0, 1]:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < self.width and 0 <= ny < self.height:
+                    if (ny * self.width + nx) in self.mines:
                         count += 1
         return count
 
     def reveal(self, x, y):
-        if self.revealed[y][x]:
+        if self.revealed[y][x]:  # If already revealed, do nothing
             return True
-        self.revealed[y][x] = True
         if (y * self.width + x) in self.mines:
             return False
+        self.revealed[y][x] = True
+        self.revealed_count += 1  # Increment revealed cells count
+
+        # If no neighboring mines, reveal neighbors recursively
         if self.count_mines_nearby(x, y) == 0:
-            for dy in range(-1, 2):
-                for dx in range(-1, 2):
-                    if 0 <= x + dx < self.width and 0 <= y + dy < self.height:
-                        self.reveal(x + dx, y + dy)
+            for dx in [-1, 0, 1]:
+                for dy in [-1, 0, 1]:
+                    nx, ny = x + dx, y + dy
+                    if 0 <= nx < self.width and 0 <= ny < self.height:
+                        self.reveal(nx, ny)
         return True
 
-    def check_win(self):
-        for y in range(self.height):
-            for x in range(self.width):
-                if not self.revealed[y][x] and (y * self.width + x) not in self.mines:
-                    return False
-        return True
+    def is_winner(self):
+        # Check if the number of revealed cells equals the number of non-mine cells
+        return self.revealed_count == self.total_cells - len(self.mines)
 
     def play(self):
         while True:
@@ -70,8 +72,9 @@ class Minesweeper:
                     self.print_board(reveal=True)
                     print("Game Over! You hit a mine.")
                     break
-                if self.check_win():
-                    self.print_board()
+                if self.is_winner():
+                    self.print_board(reveal=True)
+                    print("Congratulations! You've won the game.")
                     break
             except ValueError:
                 print("Invalid input. Please enter numbers only.")
