@@ -3,13 +3,13 @@ import sys
 
 def factorial(n):
     """
-    Calculate the factorial of a given non-negative integer.
+    Calculate the factorial of a non-negative integer n using recursion.
 
     Parameters:
-    n (int): The integer for which the factorial is to be calculated. Must be non-negative.
+    n (int): A non-negative integer whose factorial is to be computed.
 
     Returns:
-    int: The factorial of the given integer. Returns 1 if n is 0.
+    int: The factorial of the input integer n. Returns 1 if n is 0.
     """
     if n == 0:
         return 1
