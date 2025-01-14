@@ -30,8 +30,10 @@
 
     function changeBackgroundColor() {
         // Generate a random color
-        var randomColor = "#" + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+        var randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
         // Change the background color of the body
+	// Ensure the color code is always 6 digits
+        randomColor = randomColor.padEnd(7, '0');
         document.body.style.backgroundColor = randomColor;
     }
 </script>
